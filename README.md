@@ -8,7 +8,7 @@
 >
 > Lib: paramiko==2.10.3
 
-## Comando
+## Comandos + Parâmetros
 
 ### Via bash
 
