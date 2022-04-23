@@ -45,4 +45,4 @@ $[?(@.vm == "{#VM}" && @.pve == "{#PVE}")].uso_percent.first()
 
 ### Trigger
 
-![trigger](img/trigger1.png)
+![trigger](img/trigger2.png)
