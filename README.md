@@ -39,8 +39,6 @@ $[?(@.vm == "{#VM}" && @.pve == "{#PVE}")].uso_percent.first()
 
 ![-](img/exemplo1.png)
 
-## Retorno do script
-
 ```json
 [
   {
@@ -63,8 +61,6 @@ $[?(@.vm == "{#VM}" && @.pve == "{#PVE}")].uso_percent.first()
     "total": 100,
     "uso": 27.14,
     "uso_percent": 27.14
-  },
-  .
-  .
-  .
+  }
+]
 ```
