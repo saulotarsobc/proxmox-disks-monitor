@@ -1,6 +1,0 @@
-*.json
-venv
-gitp
-main.py
-req.txt
-.gitignore
