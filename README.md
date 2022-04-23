@@ -2,11 +2,11 @@
 
 ## **[Saulo Costa - Telegram](https://t.me/saulotarsobc)**
 
-![GRAFANA](img/exemplo2.png)
-
 > Monitoramento de discos das VM's com Python
 >
 > Lib: paramiko==2.10.3
+> 
+![GRAFANA](img/exemplo2.png)
 
 ## Comandos + Parâmetros
 
