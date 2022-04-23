@@ -41,28 +41,8 @@ $[?(@.vm == "{#VM}" && @.pve == "{#PVE}")].uso_percent.first()
 
 ![-](img/exemplo1.png)
 
-```json
-[
-  {
-    "vm": "vm-100-disk-0",
-    "pve": "pve",
-    "total": 480,
-    "uso": 17.14,
-    "uso_percent": 3.57
-  },
-  {
-    "vm": "vm-101-disk-0",
-    "pve": "pve",
-    "total": 32,
-    "uso": 3.12,
-    "uso_percent": 9.76
-  },
-  {
-    "vm": "vm-102-disk-0",
-    "pve": "pve",
-    "total": 100,
-    "uso": 27.14,
-    "uso_percent": 27.14
-  }
-]
-```
+## Template
+
+### Trigger
+
+![trigger](img/trigger1.png)
