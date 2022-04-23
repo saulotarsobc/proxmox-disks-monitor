@@ -67,7 +67,7 @@ $[?(@.vm == "{#VM}" && @.pve == "{#PVE}")].uso_percent.first()
 
 ![-](img/exemplo1.png)
 
-## Template
+## Template Zabbix
 
 ### Itens
 
