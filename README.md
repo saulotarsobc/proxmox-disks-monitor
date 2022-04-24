@@ -67,7 +67,11 @@ $[?(@.vm == "{#VM}" && @.pve == "{#PVE}")].uso_percent.first()
 
 ![-](img/exemplo1.png)
 
-## Template Zabbix
+## Zabbix + Grafana
+
+[👉 Template](/pessoal/zbx_export_templates.xml)
+
+[👉 Dashboard](/pessoal/dash.json)
 
 ### Itens
 

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.4</version>
+    <date>2022-04-24T15:26:50Z</date>
+    <groups>
+        <group>
+            <uuid>c23a4c6ab43a4d3bb82eb944e662c63d</uuid>
+            <name>PROXMOX SERVERS</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <uuid>534f261b77e84760bd8a12329a4acd76</uuid>
+            <template>Proxmox - Monitoramento de Discos das VMs</template>
+            <name>Proxmox - Monitoramento de Discos das VMs</name>
+            <description>Monitoramento usando o retorno do comando lvs</description>
+            <groups>
+                <group>
+                    <name>PROXMOX SERVERS</name>
+                </group>
+            </groups>
+            <items>
+                <item>
+                    <uuid>0fd013ca25704f1cbf4638eee5a6d471</uuid>
+                    <name>Proxmox - Monitoramento de Discos das VMs</name>
+                    <type>EXTERNAL</type>
+                    <key>proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]</key>
+                    <delay>5m</delay>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <uuid>e5b480b16eb2401baac3a72da1de7e77</uuid>
+                    <name>Discovery de Discos</name>
+                    <type>DEPENDENT</type>
+                    <key>discovery</key>
+                    <delay>0</delay>
+                    <lifetime>0d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <uuid>58ca7e2552ce4a218f13fa053bbfa749</uuid>
+                            <name>{#PVE} - {#VM}</name>
+                            <type>DEPENDENT</type>
+                            <key>disco.percent[{#VM}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>60d</trends>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.vm == &quot;{#VM}&quot; &amp;&amp; @.pve == &quot;{#PVE}&quot;)].uso_percent.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>sc pm dicos</tag>
+                                    <value>percent</value>
+                                </tag>
+                            </tags>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <uuid>0ca0b0687d514f6292a6d5cebe3863a5</uuid>
+                                    <expression>last(/Proxmox - Monitoramento de Discos das VMs/disco.percent[{#VM}])&gt;80</expression>
+                                    <name>{#PVE} - {#VM} - Alerta de Uso de Disco 80%</name>
+                                    <priority>AVERAGE</priority>
+                                </trigger_prototype>
+                                <trigger_prototype>
+                                    <uuid>5e27ffbb4f624a79ac653dc2f0949710</uuid>
+                                    <expression>last(/Proxmox - Monitoramento de Discos das VMs/disco.percent[{#VM}])&gt;90</expression>
+                                    <name>{#PVE} - {#VM} - Alerta de Uso de Disco 90%</name>
+                                    <priority>HIGH</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>562274c8b70a46a5b6b8618bf9ece48a</uuid>
+                            <name>{#PVE} - {#VM}</name>
+                            <type>DEPENDENT</type>
+                            <key>disco.total[{#VM}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>60d</trends>
+                            <units>GB</units>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.vm == &quot;{#VM}&quot; &amp;&amp; @.pve == &quot;{#PVE}&quot;)].total.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>sc pm dicos</tag>
+                                    <value>total</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>00682b4b78ae4a90aaff49cc04e1d63d</uuid>
+                            <name>{#PVE} - {#VM}</name>
+                            <type>DEPENDENT</type>
+                            <key>disco.uso[{#VM}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>60d</trends>
+                            <value_type>FLOAT</value_type>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$[?(@.vm == &quot;{#VM}&quot; &amp;&amp; @.pve == &quot;{#PVE}&quot;)].uso.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>sc pm dicos</tag>
+                                    <value>uso</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#PVE}</lld_macro>
+                            <path>$..pve.first()</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#VM}</lld_macro>
+                            <path>$..vm.first()</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                </discovery_rule>
+            </discovery_rules>
+            <macros>
+                <macro>
+                    <macro>{$SSH_PASS}</macro>
+                    <value>12345678</value>
+                    <description>senha ssh do servidor proxmox</description>
+                </macro>
+                <macro>
+                    <macro>{$SSH_PORT}</macro>
+                    <value>22</value>
+                    <description>porta ssh do servidor proxmox</description>
+                </macro>
+                <macro>
+                    <macro>{$SSH_USER}</macro>
+                    <value>root</value>
+                    <description>usuario ssh do servidor proxmox</description>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+</zabbix_export>
