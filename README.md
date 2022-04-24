@@ -6,7 +6,7 @@
 >
 > Lib: paramiko==2.10.3
 
-![GRAFANA](img/exemplo2.png)
+![GRAFANA](img/dash.png)
 
 ## Proxmox
 
