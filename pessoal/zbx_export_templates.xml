@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.4</version>
-    <date>2022-04-24T15:26:50Z</date>
+    <date>2022-04-25T19:54:55Z</date>
     <groups>
         <group>
             <uuid>c23a4c6ab43a4d3bb82eb944e662c63d</uuid>
@@ -25,7 +25,7 @@
                     <name>Proxmox - Monitoramento de Discos das VMs</name>
                     <type>EXTERNAL</type>
                     <key>proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]</key>
-                    <delay>5m</delay>
+                    <delay>3m</delay>
                     <history>0</history>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
@@ -33,28 +33,35 @@
             </items>
             <discovery_rules>
                 <discovery_rule>
-                    <uuid>e5b480b16eb2401baac3a72da1de7e77</uuid>
-                    <name>Discovery de Discos</name>
+                    <uuid>6e93070b3f7d476da6911765f5b4d5bd</uuid>
+                    <name>Discovery de Discos - Particao data</name>
                     <type>DEPENDENT</type>
-                    <key>discovery</key>
+                    <key>discovery.json.paticoes</key>
                     <delay>0</delay>
-                    <lifetime>0d</lifetime>
+                    <filter>
+                        <conditions>
+                            <condition>
+                                <macro>{#PARTICAO}</macro>
+                                <value>^data$</value>
+                                <formulaid>A</formulaid>
+                            </condition>
+                        </conditions>
+                    </filter>
                     <item_prototypes>
                         <item_prototype>
-                            <uuid>58ca7e2552ce4a218f13fa053bbfa749</uuid>
-                            <name>{#PVE} - {#VM}</name>
+                            <uuid>639258f870c04c2cb8e8ab93b1138d69</uuid>
+                            <name>{#PVE} - {#PARTICAO}</name>
                             <type>DEPENDENT</type>
-                            <key>disco.percent[{#VM}]</key>
+                            <key>disco.particoes.livre[{#PARTICAO}]</key>
                             <delay>0</delay>
                             <history>30d</history>
                             <trends>60d</trends>
-                            <value_type>FLOAT</value_type>
-                            <units>%</units>
+                            <units>B</units>
                             <preprocessing>
                                 <step>
                                     <type>JSONPATH</type>
                                     <parameters>
-                                        <parameter>$[?(@.vm == &quot;{#VM}&quot; &amp;&amp; @.pve == &quot;{#PVE}&quot;)].uso_percent.first()</parameter>
+                                        <parameter>$..particoes[?(@.particao== '{#PARTICAO}' &amp;&amp; @.pve == '{#PVE}')].livre.first()</parameter>
                                     </parameters>
                                 </step>
                             </preprocessing>
@@ -63,7 +70,258 @@
                             </master_item>
                             <tags>
                                 <tag>
-                                    <tag>sc pm dicos</tag>
+                                    <tag>sc pm discos particao</tag>
+                                    <value>livre</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>6fddda5c3bc940b290e068398ac1c863</uuid>
+                            <name>{#PVE} - {#PARTICAO}</name>
+                            <type>DEPENDENT</type>
+                            <key>disco.particoes.percent[{#PARTICAO}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>60d</trends>
+                            <units>%</units>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$..particoes[?(@.particao== '{#PARTICAO}' &amp;&amp; @.pve == '{#PVE}')].uso_percent.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>sc pm discos particao</tag>
+                                    <value>percent</value>
+                                </tag>
+                            </tags>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <uuid>a7e3822a4c6f4bd7ae479971420a3b14</uuid>
+                                    <expression>last(/Proxmox - Monitoramento de Discos das VMs/disco.particoes.percent[{#PARTICAO}])&gt;80</expression>
+                                    <name>{#PVE} - {#PARTICAO} - Alerta de Uso de Disco 80%</name>
+                                    <priority>AVERAGE</priority>
+                                </trigger_prototype>
+                                <trigger_prototype>
+                                    <uuid>8746f6daede146f498c2d1b132b4097b</uuid>
+                                    <expression>last(/Proxmox - Monitoramento de Discos das VMs/disco.particoes.percent[{#PARTICAO}])&gt;90</expression>
+                                    <name>{#PVE} - {#PARTICAO} - Alerta de Uso de Disco 90%</name>
+                                    <priority>HIGH</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>bb2eb47418e94a66b829e4e540340bc1</uuid>
+                            <name>{#PVE} - {#PARTICAO}</name>
+                            <type>DEPENDENT</type>
+                            <key>disco.particoes.total[{#PARTICAO}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>60d</trends>
+                            <units>B</units>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$..particoes[?(@.particao== '{#PARTICAO}' &amp;&amp; @.pve == '{#PVE}')].total.first()</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                                    <parameters>
+                                        <parameter>3000</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>sc pm discos particao</tag>
+                                    <value>total</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>a47b22efdada4b22a383645c22ca16dd</uuid>
+                            <name>{#PVE} - {#PARTICAO}</name>
+                            <type>DEPENDENT</type>
+                            <key>disco.particoes.uso[{#PARTICAO}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>60d</trends>
+                            <units>B</units>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$..particoes[?(@.particao== '{#PARTICAO}' &amp;&amp; @.pve == '{#PVE}')].uso.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>sc pm discos particao</tag>
+                                    <value>uso</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#PARTICAO}</lld_macro>
+                            <path>$..particao.first()</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#PVE}</lld_macro>
+                            <path>$..pve.first()</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$..particoes.first()</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <uuid>55bedfcce4af404dac120d2972c107a4</uuid>
+                    <name>Discovery de Discos - Particao root + swap</name>
+                    <type>DEPENDENT</type>
+                    <key>discovery.json.paticoes.root.swap</key>
+                    <delay>0</delay>
+                    <filter>
+                        <conditions>
+                            <condition>
+                                <macro>{#PARTICAO}</macro>
+                                <value>^root|swap$</value>
+                                <formulaid>A</formulaid>
+                            </condition>
+                        </conditions>
+                    </filter>
+                    <item_prototypes>
+                        <item_prototype>
+                            <uuid>ce8bc681ad704deaa53a2b67526a7427</uuid>
+                            <name>{#PVE} - {#PARTICAO}</name>
+                            <type>DEPENDENT</type>
+                            <key>disco.particoes.total.root.swap[{#PARTICAO}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>60d</trends>
+                            <units>B</units>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$..particoes[?(@.particao== '{#PARTICAO}' &amp;&amp; @.pve == '{#PVE}')].total.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>sc pm discos particao</tag>
+                                    <value>total</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#PARTICAO}</lld_macro>
+                            <path>$..particao.first()</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#PVE}</lld_macro>
+                            <path>$..pve.first()</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$..particoes.first()</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <uuid>e5b480b16eb2401baac3a72da1de7e77</uuid>
+                    <name>Discovery de Discos - VMs</name>
+                    <type>DEPENDENT</type>
+                    <key>discovery.json.vms</key>
+                    <delay>0</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <uuid>803080c56e2f4f75a33438a0facc74f0</uuid>
+                            <name>{#PVE} - {#VM}</name>
+                            <type>DEPENDENT</type>
+                            <key>disco.livre[{#VM}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>60d</trends>
+                            <units>B</units>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$..vms[?(@.vm== '{#VM}' &amp;&amp; @.pve == '{#PVE}')].livre.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>sc pm discos</tag>
+                                    <value>livre</value>
+                                </tag>
+                            </tags>
+                        </item_prototype>
+                        <item_prototype>
+                            <uuid>58ca7e2552ce4a218f13fa053bbfa749</uuid>
+                            <name>{#PVE} - {#VM}</name>
+                            <type>DEPENDENT</type>
+                            <key>disco.percent[{#VM}]</key>
+                            <delay>0</delay>
+                            <history>30d</history>
+                            <trends>60d</trends>
+                            <units>%</units>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <parameters>
+                                        <parameter>$..vms[?(@.vm== '{#VM}' &amp;&amp; @.pve == '{#PVE}')].uso_percent.first()</parameter>
+                                    </parameters>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]</key>
+                            </master_item>
+                            <tags>
+                                <tag>
+                                    <tag>sc pm discos</tag>
                                     <value>percent</value>
                                 </tag>
                             </tags>
@@ -90,12 +348,18 @@
                             <delay>0</delay>
                             <history>30d</history>
                             <trends>60d</trends>
-                            <units>GB</units>
+                            <units>B</units>
                             <preprocessing>
                                 <step>
                                     <type>JSONPATH</type>
                                     <parameters>
-                                        <parameter>$[?(@.vm == &quot;{#VM}&quot; &amp;&amp; @.pve == &quot;{#PVE}&quot;)].total.first()</parameter>
+                                        <parameter>$..vms[?(@.vm== '{#VM}' &amp;&amp; @.pve == '{#PVE}')].total.first()</parameter>
+                                    </parameters>
+                                </step>
+                                <step>
+                                    <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                                    <parameters>
+                                        <parameter>3000</parameter>
                                     </parameters>
                                 </step>
                             </preprocessing>
@@ -104,7 +368,7 @@
                             </master_item>
                             <tags>
                                 <tag>
-                                    <tag>sc pm dicos</tag>
+                                    <tag>sc pm discos</tag>
                                     <value>total</value>
                                 </tag>
                             </tags>
@@ -117,12 +381,12 @@
                             <delay>0</delay>
                             <history>30d</history>
                             <trends>60d</trends>
-                            <value_type>FLOAT</value_type>
+                            <units>B</units>
                             <preprocessing>
                                 <step>
                                     <type>JSONPATH</type>
                                     <parameters>
-                                        <parameter>$[?(@.vm == &quot;{#VM}&quot; &amp;&amp; @.pve == &quot;{#PVE}&quot;)].uso.first()</parameter>
+                                        <parameter>$..vms[?(@.vm== '{#VM}' &amp;&amp; @.pve == '{#PVE}')].uso.first()</parameter>
                                     </parameters>
                                 </step>
                             </preprocessing>
@@ -131,7 +395,7 @@
                             </master_item>
                             <tags>
                                 <tag>
-                                    <tag>sc pm dicos</tag>
+                                    <tag>sc pm discos</tag>
                                     <value>uso</value>
                                 </tag>
                             </tags>
@@ -150,6 +414,14 @@
                             <path>$..vm.first()</path>
                         </lld_macro_path>
                     </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$..vms.first()</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
                 </discovery_rule>
             </discovery_rules>
             <macros>
