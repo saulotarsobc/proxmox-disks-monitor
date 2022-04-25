@@ -48,9 +48,17 @@ script.py [proxmox ip eddress] [proxmox ssh port] [proxmox username] [proxmox pa
 proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]
 ```
 
+## Pre porcessamento
+
+```js
+$..particoes.first()
+$..vms.first()
+```
+
 ## Macro
 
 ```js
+{#PARTICAO} = $..particao.first()
 {#VM} = $..vm.first()
 {#PVE} = $..pve.first()
 ```
@@ -58,9 +66,14 @@ proxmox_disks_ssh[{HOST.IP}, {$SSH_PORT}, {$SSH_USER}, {$SSH_PASS}]
 ## JSON Path
 
 ```js
-$[?(@.vm == "{#VM}" && @.pve == "{#PVE}")].total.first()
-$[?(@.vm == "{#VM}" && @.pve == "{#PVE}")].uso.first()
-$[?(@.vm == "{#VM}" && @.pve == "{#PVE}")].uso_percent.first()
+$..particoes[?(@.particao== '{#PARTICAO}' && @.pve == '{#PVE}')].total.first()
+$..particoes[?(@.particao== '{#PARTICAO}' && @.pve == '{#PVE}')].uso_percent.first()
+$..particoes[?(@.particao== '{#PARTICAO}' && @.pve == '{#PVE}')].uso.first()
+$..particoes[?(@.particao== '{#PARTICAO}' && @.pve == '{#PVE}')].livre.first()
+$..vms[?(@.vm== '{#VM}' && @.pve == '{#PVE}')].total.first()
+$..vms[?(@.vm== '{#VM}' && @.pve == '{#PVE}')].uso_percent.first()
+$..vms[?(@.vm== '{#VM}' && @.pve == '{#PVE}')].uso.first()
+$..vms[?(@.vm== '{#VM}' && @.pve == '{#PVE}')].livre.first()
 ```
 
 ## Retorno do script
